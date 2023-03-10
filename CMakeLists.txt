@@ -14,6 +14,7 @@ target_compile_definitions(png-inverter PRIVATE "-DPNGINVERTER_BUILD_VERSION=\"$
 set_target_properties(png-inverter PROPERTIES PUBLIC_HEADER "include/png-inverter.h")
 
 if(NOT BUILD_TESTING STREQUAL OFF)
+    enable_testing()
     add_subdirectory(tests)
 endif()
 
