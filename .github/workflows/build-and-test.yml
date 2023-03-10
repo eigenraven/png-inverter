@@ -28,6 +28,11 @@ jobs:
             preset: release
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Set up Visual Studio shell
+        if: runner.os == 'Windows'
+        uses: egor-tensin/vs-shell@v2
+        with:
+          arch: x64
       - name: "Install Conan and CMake"
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends python3-pip cmake build-essential ninja-build g++ && sudo pip install conan==2.0.1 cmake==3.23.3
@@ -76,6 +81,11 @@ jobs:
           - build_type: Release
             preset: release
     steps:
+      - name: Set up Visual Studio shell
+        if: runner.os == 'Windows'
+        uses: egor-tensin/vs-shell@v2
+        with:
+          arch: x64
       - name: "Install Conan and CMake"
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends python3-pip cmake build-essential ninja-build g++ && sudo pip install conan==2.0.1 cmake==3.23.3
