@@ -46,7 +46,7 @@ class png_inverterRecipe(ConanFile):
     def generate(self):
         deps = CMakeDeps(self)
         deps.generate()
-        tc = CMakeToolchain(self)
+        tc = CMakeToolchain(self, generator="Ninja Multi-Config")
         tc.cache_variables["PNGINVERTER_BUILD_VERSION"] = self.version
         tc.generate()
 
@@ -55,9 +55,7 @@ class png_inverterRecipe(ConanFile):
         cmake.configure()
         cmake.build()
         if not self.conf.get("tools.build:skip_test", default=False):
-            test_folder = path.join("tests")
-            if self.settings.os == "Windows":
-                test_folder = path.join("tests", str(self.settings.build_type))
+            test_folder = path.join("tests", str(self.settings.build_type))
             self.run(path.join(test_folder, "test_png_inverter"))
 
     def package(self):

@@ -50,7 +50,7 @@ jobs:
           conan install . -s build_type=${{ matrix.build_type }} --build=missing
       - name: "CMake Configure"
         run: |
-          cmake --preset conan-${{ matrix.preset }}
+          cmake --preset conan-default
       - name: "CMake Build"
         run: |
           cmake --build --preset conan-${{ matrix.preset }}

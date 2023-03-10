@@ -1,8 +1,13 @@
 
+# A simple Conan 2.0 + CMake project - PNG inverter library&tool
+
+This project build a library for inverting colors in png files and a simple commandline utility to do the same.
+
 ## Initial Conan setup
 
 Requirements:
  - C++14 compatible compiler
+ - Ninja
  - CMake 3.22.1
  - Conan 2.0.1
 
@@ -16,7 +21,7 @@ conan profile detect --force
 
 To setup the workspace run:
 ```
-conan install . -s build_type=release
+conan install . --build=missing
 ```
 This generates a build folder, and CMakeUserPresets.json for manual CMake usage.
 
@@ -27,7 +32,7 @@ conan build .
 
 To manually configure and build via CMake, and then run tests:
 ```
-cmake --preset conan-release
+cmake --preset conan-default
 cmake --build --preset conan-release
 ctest --preset conan-release
 ```
