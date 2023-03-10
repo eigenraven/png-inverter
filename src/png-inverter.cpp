@@ -1,10 +1,11 @@
 #include <iostream>
+#include <fmt/color.h>
 #include "png-inverter.h"
 
 
 
 void png_inverter(){
-    
+    fmt::print(fg(fmt::color::light_green) | fmt::emphasis::bold, "Test fmt presence.\n");
 
     #ifdef NDEBUG
     std::cout << "png-inverter/0.0.1: Hello World Release!\n";

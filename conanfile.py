@@ -1,6 +1,6 @@
 from conan import ConanFile
+from conan.tools.build import check_min_cppstd
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
-
 
 class png_inverterRecipe(ConanFile):
     name = "png-inverter"
@@ -20,6 +20,13 @@ class png_inverterRecipe(ConanFile):
 
     # Sources are located in the same place as this recipe, copy them to the recipe
     exports_sources = "CMakeLists.txt", "src/*", "include/*"
+
+    def validate(self):
+        check_min_cppstd(self, "14")
+
+    def requirements(self):
+        self.requires("fmt/9.1.0")
+        self.requires("libpng/1.6.39")
 
     def config_options(self):
         if self.settings.os == "Windows":
@@ -50,4 +57,3 @@ class png_inverterRecipe(ConanFile):
     def package_info(self):
         self.cpp_info.libs = ["png-inverter"]
 
-    
