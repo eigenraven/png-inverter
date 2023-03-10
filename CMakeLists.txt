@@ -17,6 +17,9 @@ target_compile_definitions(png-inverter PRIVATE "-DPNGINVERTER_BUILD_VERSION=\"$
 
 set_target_properties(png-inverter PROPERTIES PUBLIC_HEADER "include/png-inverter.h")
 
+add_executable(png-inverter-tool src/bin/main.cpp)
+target_link_libraries(png-inverter-tool PUBLIC fmt::fmt png-inverter)
+
 if(NOT BUILD_TESTING STREQUAL OFF)
     enable_testing()
     add_subdirectory(tests)

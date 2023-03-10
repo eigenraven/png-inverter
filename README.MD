@@ -32,6 +32,11 @@ cmake --build --preset conan-release
 ctest --preset conan-release
 ```
 
+To run the built binary and invert an image:
+```
+./build/Release/png-inverter-tool test_image.png inverted.png
+```
+
 ## Building the package
 
 ```
