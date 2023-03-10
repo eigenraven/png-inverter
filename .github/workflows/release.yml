@@ -1,0 +1,91 @@
+name: Attach artifacts to releases
+
+on:
+  push:
+    tags:
+    - 'v*' # Pushes to v* tags like v0.0.1
+
+jobs:
+
+  create-draft:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "Checkout sources"
+        uses: actions/checkout@v3
+      - name: "Delete previous release"
+        continue-on-error: true
+        run: gh release delete --yes ${{ github.ref_name }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: "Create release"
+        run: gh release create ${{ github.ref_name }} --draft --generate-notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build:
+    needs: [create-draft]
+    strategy:
+      fail-fast: false # Don't cancel other matrix jobs if one fails
+      matrix:
+        os: [windows-2022, ubuntu-22.04]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: "Set up Visual Studio shell"
+        if: runner.os == 'Windows'
+        uses: egor-tensin/vs-shell@v2
+        with:
+          arch: x64
+      - name: "Install Conan and CMake"
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends python3-pip cmake build-essential ninja-build g++ && sudo pip install conan==2.0.1 cmake==3.23.3
+      - name: "Install Conan and CMake"
+        if: runner.os == 'Windows'
+        # CMake 3.25 is already included in the runner image
+        run: pip install conan==2.0.1
+      - name: "Setup Conan"
+        run: conan profile detect --force
+      - name: "Checkout sources"
+        uses: actions/checkout@v3
+      - name: "Setup Conan cache"
+        id: "conan-cache"
+        uses: actions/cache@v3
+        with:
+          path: ~/.conan2
+          key: ${{ runner.os }}-Release-conan2
+      - name: "Conan install: Generate the CMake configuration"
+        run: |
+          conan install . -s build_type=Release --build=missing
+      - name: "CMake Configure"
+        run: |
+          cmake --preset conan-default
+      - name: "CMake Build"
+        run: |
+          cmake --build --preset conan-release
+      - name: Compress and upload artifacts
+        if: runner.os == 'Linux'
+        run: |
+          cd build/Release/Release
+          tar -cvf png-inverter-${{ github.ref_name }}-${{ matrix.os }}.tar ./*
+          gh release upload ${{ github.ref_name }} png-inverter-${{ github.ref_name }}-${{ matrix.os }}.tar
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Compress and upload artifacts
+        if: runner.os == 'Windows'
+        run: |
+          cd build/Release/Release
+          zip png-inverter-${{ github.ref_name }}-${{ matrix.os }}.zip ./*
+          gh release upload ${{ github.ref_name }} png-inverter-${{ github.ref_name }}-${{ matrix.os }}.zip
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+
+  undraft:
+    runs-on: ubuntu-22.04
+    needs: [build]
+    steps:
+      - name: "Checkout sources"
+        uses: actions/checkout@v3
+      - name: "Undraft release"
+        run: gh release edit ${{ github.ref_name }} --draft=false
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
