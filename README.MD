@@ -40,10 +40,11 @@ cmake --build --preset conan-release
 ctest --preset conan-release
 ```
 
-To run the built binary and invert an image:
+To run the built binary and invert an image on Linux:
 ```
 ./build/Release/Release/png-inverter-tool test_image.png inverted.png
 ```
+On Windows, the binary is in `./build/Release/png-inverter-tool.exe`
 
 Sources are in the `include/` and `src/` directories.
 

@@ -90,7 +90,7 @@ jobs:
       - name: Compress and upload artifacts
         if: runner.os == 'Windows'
         run: |
-          cd build/Release/Release
+          cd build/Release
           zip png-inverter-${{ github.ref_name }}-${{ matrix.os }}.zip ./*
           gh release upload ${{ github.ref_name }} png-inverter-${{ github.ref_name }}-${{ matrix.os }}.zip
         env:
