@@ -10,6 +10,6 @@ conan profile detect --force
 ## Building the package
 
 ```
-conan create . -s build_type=Release -o png-inverter/0.0.1:shared=True
+conan create . -s build_type=Release -o png-inverter/0.0.1:shared=True --build=missing
 ```
 
