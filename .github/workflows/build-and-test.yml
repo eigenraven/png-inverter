@@ -1,0 +1,81 @@
+name: Build and test
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  # Cancel previous running actions for the same PR
+  cancel_previous:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Cancel Workflow Action
+        uses: styfle/cancel-workflow-action@0.11.0
+
+  build:
+    if: github.event.pull_request.draft == false
+    strategy:
+      fail-fast: false # Don't cancel other matrix jobs if one fails
+      matrix:
+        include:
+          - build_type: Debug
+            preset: debug
+          - build_type: Release
+            preset: release
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "Install Conan and CMake"
+        run: pip install conan==2.0.1 cmake==3.22.1
+      - name: "Setup Conan"
+        run: conan profile detect --force
+      - name: "Checkout sources"
+        uses: actions/checkout@v3
+      - name: "Setup Conan cache"
+        id: "conan-cache"
+        uses: actions/cache@v3
+        with:
+          path: ~/.conan2
+          key: ${{ runner.os }}-${{ matrix.build_type }}-conan2
+      - name: "Conan install: Generate the CMake configuration"
+        run: |
+          conan install . -s build_type=${{ matrix.build_type }} --build=missing
+      - name: "CMake Configure"
+        run: |
+          cmake --preset conan-${{ matrix.preset }}
+      - name: "CMake Build"
+        run: |
+          cmake --build --preset conan-${{ matrix.preset }}
+      - name: "Create output artifact"
+        uses: actions/upload-artifact@v3
+        with:
+          name: built-sources-${{ matrix.build_type }}
+          path: ${{ github.workspace }}
+
+  test:
+    if: github.event.pull_request.draft == false
+    needs: [build]
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false # Don't cancel other matrix jobs if one fails
+      matrix:
+        include:
+          - build_type: Debug
+            preset: debug
+          - build_type: Release
+            preset: release
+    steps:
+      - name: "Install Conan and CMake"
+        run: pip install conan==2.0.1 cmake==3.22.1
+      - name: "Setup Conan"
+        run: conan profile detect --force
+      - name: "Setup built sources"
+        uses: actions/download-artifact@v3
+        with:
+          name: built-sources-${{ matrix.build_type }}
+          path: ${{ github.workspace }}
+      - name: "CTest tests"
+        run: |
+          ctest --preset conan-${{ matrix.preset }}

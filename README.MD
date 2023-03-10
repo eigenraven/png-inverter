@@ -16,7 +16,7 @@ conan profile detect --force
 
 To setup the workspace run:
 ```
-conan install .
+conan install . -s build_type=release
 ```
 This generates a build folder, and CMakeUserPresets.json for manual CMake usage.
 
