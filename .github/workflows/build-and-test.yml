@@ -28,7 +28,8 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: "Install Conan and CMake"
-        run: pip install conan==2.0.1 cmake==3.22.1
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends python3-pip cmake build-essential ninja-build g++ && sudo pip install conan==2.0.1 cmake==3.23.3
       - name: "Setup Conan"
         run: conan profile detect --force
       - name: "Checkout sources"
@@ -68,7 +69,8 @@ jobs:
             preset: release
     steps:
       - name: "Install Conan and CMake"
-        run: pip install conan==2.0.1 cmake==3.22.1
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends python3-pip cmake build-essential ninja-build g++ && sudo pip install conan==2.0.1 cmake==3.23.3
       - name: "Setup Conan"
         run: conan profile detect --force
       - name: "Setup built sources"
