@@ -115,4 +115,4 @@ jobs:
           ctest --preset conan-${{ matrix.preset }}
       - name: "Conan export-pkg test"
         run: |
-          conan export-pkg .
+          conan export-pkg . -s build_type=${{ matrix.build_type }}
