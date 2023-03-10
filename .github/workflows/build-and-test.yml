@@ -20,16 +20,21 @@ jobs:
     strategy:
       fail-fast: false # Don't cancel other matrix jobs if one fails
       matrix:
+        os: [windows-2022, ubuntu-22.04]
         include:
           - build_type: Debug
             preset: debug
           - build_type: Release
             preset: release
-    runs-on: ubuntu-22.04
+    runs-on: ${{ matrix.os }}
     steps:
       - name: "Install Conan and CMake"
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends python3-pip cmake build-essential ninja-build g++ && sudo pip install conan==2.0.1 cmake==3.23.3
+      - name: "Install Conan and CMake"
+        if: runner.os == 'Windows'
+        # CMake 3.25 is already included in the runner image
+        run: pip install conan==2.0.1
       - name: "Setup Conan"
         run: conan profile detect --force
       - name: "Checkout sources"
@@ -64,6 +69,7 @@ jobs:
     strategy:
       fail-fast: false # Don't cancel other matrix jobs if one fails
       matrix:
+        os: [windows-2022, ubuntu-22.04]
         include:
           - build_type: Debug
             preset: debug
@@ -73,6 +79,10 @@ jobs:
       - name: "Install Conan and CMake"
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends python3-pip cmake build-essential ninja-build g++ && sudo pip install conan==2.0.1 cmake==3.23.3
+      - name: "Install Conan and CMake"
+        if: runner.os == 'Windows'
+        # CMake 3.25 is already included in the runner image
+        run: pip install conan==2.0.1
       - name: "Setup Conan"
         run: conan profile detect --force
       - name: "Download built sources"
