@@ -1,5 +1,8 @@
 inverted.png
 docs/
+*.zip
+*.tar
+*.tar.gz
 
 ### C++ ###
 # Prerequisites

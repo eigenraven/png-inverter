@@ -22,6 +22,24 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  docs:
+    needs: [create-draft]
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "Install Doxygen"
+        run: sudo apt-get update && sudo apt-get install --yes build-essential doxygen
+      - name: "Checkout sources"
+        uses: actions/checkout@v3
+      - name: "Generate documentation"
+        run: doxygen
+      - name: "Zip documentation"
+        run: zip -r png-inverter-docs.zip docs
+      - name: "Upload documentation"
+        run: |
+          gh release upload ${{ github.ref_name }} png-inverter-docs.zip
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   build:
     needs: [create-draft]
     strategy:
@@ -81,7 +99,7 @@ jobs:
 
   undraft:
     runs-on: ubuntu-22.04
-    needs: [build]
+    needs: [build, docs]
     steps:
       - name: "Checkout sources"
         uses: actions/checkout@v3
