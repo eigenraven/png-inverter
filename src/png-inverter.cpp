@@ -11,7 +11,7 @@
 #include <string_view>
 
 namespace png_inverter {
-std::string_view get_version() {
+const char *get_version() {
 #ifdef PNGINVERTER_BUILD_VERSION
   return PNGINVERTER_BUILD_VERSION;
 #else

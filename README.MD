@@ -3,19 +3,22 @@
 
 This project build a library for inverting colors in png files and a simple commandline utility to do the same.
 
-## Initial Conan setup
+## Requirements
 
-Requirements:
+Supported operating systems include Windows Server 2022 and Ubuntu 22.04.
+
+Install the following tools and make sure they are available on your PATH. (you can execute them from the commandline, check `ninja --version`, `cmake --version`, `conan --version`)
+
  - C++14 compatible compiler
- - Ninja
- - CMake 3.22.1
- - Conan 2.0.1
+ - [Ninja](https://ninja-build.org/)
+ - [CMake 3.22.1](https://cmake.org/)
+ - [Conan 2.0.1](https://conan.io/)
 
-Following <https://docs.conan.io/2/installation.html>, <https://docs.conan.io/2/tutorial/consuming_packages/build_simple_cmake_project.html>
-
+If you haven't used Conan 2 before, set up a default profile:
 ```
 conan profile detect --force
 ```
+Tweak it as necessary if you notice a setting you want to change in the commandline output.
 
 ## Developing png-inverter locally
 
@@ -42,9 +45,12 @@ To run the built binary and invert an image:
 ./build/Release/png-inverter-tool test_image.png inverted.png
 ```
 
-## Building the package
+Sources are in the `include/` and `src/` directories.
 
-```
-conan create . -s build_type=Release -o png-inverter/0.0.1:shared=True --build=missing
-```
+## Installing to local Conan cache
 
+If you want to depend on this package via your local Conan cache, run the following:
+```
+conan create . -s build_type=Release --build=missing
+```
+You can then depend on `png-inverter/0.0.1`.
