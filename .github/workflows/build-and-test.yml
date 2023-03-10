@@ -90,8 +90,17 @@ jobs:
         with:
           name: built-sources-${{ matrix.build_type }}
           path: ${{ github.workspace }}
+      - name: "Setup Conan cache"
+        id: "conan-cache"
+        uses: actions/cache@v3
+        with:
+          path: ~/.conan2
+          key: ${{ runner.os }}-${{ matrix.build_type }}-conan2
       - name: "Uncompress built sources"
         run: tar -xvf workspace.tar
       - name: "CTest tests"
         run: |
           ctest --preset conan-${{ matrix.preset }}
+      - name: "Conan export-pkg test"
+        run: |
+          conan export-pkg .

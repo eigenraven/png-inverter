@@ -47,7 +47,7 @@ class png_inverterRecipe(ConanFile):
         deps = CMakeDeps(self)
         deps.generate()
         tc = CMakeToolchain(self, generator="Ninja Multi-Config")
-        tc.cache_variables["PNGINVERTER_BUILD_VERSION"] = self.version
+        tc.cache_variables["PNGINVERTER_BUILD_VERSION"] = str(self.version)
         tc.generate()
 
     def build(self):
