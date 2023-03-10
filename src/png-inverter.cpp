@@ -26,7 +26,7 @@ void print_version() {
 
 void invert_bytes(uint8_t *bytes, size_t bytesSz) {
   for (size_t i = 0; i < bytesSz; i++) {
-    bytes[i] = ~bytes[i];
+    bytes[i] = bytes[i] ^ 0xFF;
   }
 }
 
