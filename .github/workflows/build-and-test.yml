@@ -49,11 +49,13 @@ jobs:
       - name: "CMake Build"
         run: |
           cmake --build --preset conan-${{ matrix.preset }}
+      - name: "Compress workspace"
+        run: tar -cvf workspace.tar .
       - name: "Create output artifact"
         uses: actions/upload-artifact@v3
         with:
           name: built-sources-${{ matrix.build_type }}
-          path: ${{ github.workspace }}
+          path: ${{ github.workspace }}/workspace.tar
 
   test:
     if: github.event.pull_request.draft == false
@@ -73,11 +75,13 @@ jobs:
         run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends python3-pip cmake build-essential ninja-build g++ && sudo pip install conan==2.0.1 cmake==3.23.3
       - name: "Setup Conan"
         run: conan profile detect --force
-      - name: "Setup built sources"
+      - name: "Download built sources"
         uses: actions/download-artifact@v3
         with:
           name: built-sources-${{ matrix.build_type }}
           path: ${{ github.workspace }}
+      - name: "Uncompress built sources"
+        run: tar -xvf workspace.tar
       - name: "CTest tests"
         run: |
           ctest --preset conan-${{ matrix.preset }}
