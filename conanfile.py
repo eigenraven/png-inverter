@@ -1,6 +1,8 @@
 from conan import ConanFile
 from conan.tools.build import check_min_cppstd
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
+from conan.tools.files.copy_pattern import copy
+from os import path
 
 class png_inverterRecipe(ConanFile):
     name = "png-inverter"
@@ -19,7 +21,7 @@ class png_inverterRecipe(ConanFile):
     default_options = {"shared": False, "fPIC": True}
 
     # Sources are located in the same place as this recipe, copy them to the recipe
-    exports_sources = "CMakeLists.txt", "src/*", "include/*"
+    exports_sources = "CMakeLists.txt", "LICENSE", "src/*", "include/*", "tests/*"
 
     def validate(self):
         check_min_cppstd(self, "14")
@@ -27,6 +29,8 @@ class png_inverterRecipe(ConanFile):
     def requirements(self):
         self.requires("fmt/9.1.0")
         self.requires("libpng/1.6.39")
+
+        self.test_requires("gtest/1.13.0")
 
     def config_options(self):
         if self.settings.os == "Windows":
@@ -50,10 +54,16 @@ class png_inverterRecipe(ConanFile):
         cmake = CMake(self)
         cmake.configure()
         cmake.build()
+        if not self.conf.get("tools.build:skip_test", default=False):
+            test_folder = path.join("tests")
+            if self.settings.os == "Windows":
+                test_folder = path.join("tests", str(self.settings.build_type))
+            self.run(path.join(test_folder, "test_png_inverter"))
 
     def package(self):
         cmake = CMake(self)
         cmake.install()
+        copy(self, "LICENSE", src=self.source_folder, dst=path.join(self.package_folder, "licenses"))
 
     def package_info(self):
         self.cpp_info.libs = ["png-inverter"]
