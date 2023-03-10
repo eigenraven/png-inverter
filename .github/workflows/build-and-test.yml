@@ -60,7 +60,7 @@ jobs:
         run: |
           cmake --build --preset conan-${{ matrix.preset }}
       - name: "Compress workspace"
-        run: tar -cvf workspace.tar .
+        run: tar -cv --exclude=workspace.tar -f workspace.tar .
       - name: "Create output artifact"
         uses: actions/upload-artifact@v3
         with:
