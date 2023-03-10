@@ -56,6 +56,8 @@ conan.lock
 conanbuildinfo.*
 conaninfo.txt
 graph_info.json
+build/
+build-*/
 
 ## Various built-in generators
 # cmake_find_package generator https://docs.conan.io/en/latest/reference/generators/cmake_find_package.html
