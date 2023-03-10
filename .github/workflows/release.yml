@@ -83,16 +83,16 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           cd build/Release/Release
-          tar -cvf png-inverter-${{ github.ref_name }}-${{ matrix.os }}.tar ./*
-          gh release upload ${{ github.ref_name }} png-inverter-${{ github.ref_name }}-${{ matrix.os }}.tar
+          tar -czvf png-inverter-${{ github.ref_name }}-${{ matrix.os }}.tar.gz ./*
+          gh release upload ${{ github.ref_name }} png-inverter-${{ github.ref_name }}-${{ matrix.os }}.tar.gz
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Compress and upload artifacts
         if: runner.os == 'Windows'
         run: |
           cd build/Release
-          zip png-inverter-${{ github.ref_name }}-${{ matrix.os }}.zip ./*
-          gh release upload ${{ github.ref_name }} png-inverter-${{ github.ref_name }}-${{ matrix.os }}.zip
+          tar -czvf png-inverter-${{ github.ref_name }}-${{ matrix.os }}.tar.gz ./*
+          gh release upload ${{ github.ref_name }} png-inverter-${{ github.ref_name }}-${{ matrix.os }}.tar.gz
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
