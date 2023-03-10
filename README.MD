@@ -42,7 +42,7 @@ ctest --preset conan-release
 
 To run the built binary and invert an image:
 ```
-./build/Release/png-inverter-tool test_image.png inverted.png
+./build/Release/Release/png-inverter-tool test_image.png inverted.png
 ```
 
 Sources are in the `include/` and `src/` directories.
@@ -54,3 +54,16 @@ If you want to depend on this package via your local Conan cache, run the follow
 conan create . -s build_type=Release --build=missing
 ```
 You can then depend on `png-inverter/0.0.1`.
+
+# Automated workflows
+
+## Build & test
+
+On every push to the `dev` branch or a non-draft pull request targetting `dev`:
+ - The project is built in Debug&Release configurations on Windows&Ubuntu
+ - Unit tests are run via CTest
+
+## Release generation
+
+When a tag named `v*` is pushed (for example `v1.0.1`), a GitHub release will be automatically generated containing the built static libraries and executables for every platform; and Doxygen documentation.
+A tag can be removed and pushed again safely, this will delete the old release and create a new one.
